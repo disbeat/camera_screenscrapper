@@ -1,0 +1,72 @@
+<project name="IS-PROJECT#1" basedir="." default="main">
+
+    <property name="src.dir"     value="src"/>
+
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+
+    <property name="main-class1"  value="is.apps.CameraSearchXML"/>
+	<property name="main-class2"  value="is.apps.CameraSummaryXML"/>
+	
+	<property name="lib.dir" value="lib"/>
+
+	<path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
+    </target>
+
+    <target name="jar1" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class1}"/>
+            </manifest>
+        </jar>
+    </target>
+	
+	<target name="jar2" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class2}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run1" depends="jar1">
+        <java fork="true" classname="${main-class1}" >
+			<classpath>
+                <path refid="classpath"/>
+                <path location="${jar.dir}/${ant.project.name}.jar"/>
+            </classpath>
+			<arg line="${args}"/>
+		</java>
+    </target>
+
+	<target name="run2" depends="jar2">
+        <java fork="true" classname="${main-class2}" >
+			<classpath>
+                <path refid="classpath"/>
+                <path location="${jar.dir}/${ant.project.name}.jar"/>
+            </classpath>
+			<arg line="${args}"/>
+		</java>
+    </target>
+	
+    <target name="clean-build1" depends="clean,jar1"/>
+	<target name="clean-build2" depends="clean,jar2"/>
+
+    <target name="main1" depends="clean,run1"/>
+	<target name="main2" depends="clean,run2"/>
+
+</project>
